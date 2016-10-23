@@ -1,13 +1,14 @@
 import pybrain
 import scipy
-import HHMSigmoidLayer
+from HHMSigmoidLayer import HHMSigmoidLayer
 from scipy import random, array, empty
+import numpy
 from pybrain.structure import FeedForwardNetwork
 from pybrain.structure import FullConnection
 from pybrain.structure import LinearLayer, SigmoidLayer, BiasUnit, SoftmaxLayer
 from pybrain import *
 
-class HelmHoltzMachine():
+class HelmholtzMachine():
     
     #the helmholtz machine class is a container for the recognition and generation modules
     
@@ -16,13 +17,13 @@ class HelmHoltzMachine():
         
         self.recNet = FeedForwardNetwork()
         self.genNet = FeedForwardNetwork()
-        self.indim = indim
+        self.indim = float(indim)
         self.layerDims = LayerDims
         self.layers = numpy.zeros(Layers)
         self.biasUnits = numpy.zeros(Layers + 1)
         
         #declaring and adding input layer
-        layers[0] = HHMSigmoidLayer(indim, "HHM Sigmoid Input/Output Layer")
+        self.layers[0] = HHMSigmoidLayer(self.indim, name="HHM Sigmoid Input/Output Layer")
         self.recNet.addInputModule(self.layers[0])
         self.genNet.addOutputModule(self.layers[0])
         
@@ -55,7 +56,8 @@ class HelmHoltzMachine():
                 self.recNet.addConnection(FullConnection(self.biasUnits[j], self.layers[j+1]))
                 self.genNet.addConnection(FullConnection(self.biasUnits[j], self.layers[j-1]))
         
-        
+        self.recNet.sortModules()
+        self.genNet.sortModules()
     
     
     

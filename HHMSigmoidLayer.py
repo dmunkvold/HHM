@@ -1,15 +1,12 @@
 import pybrain
 
-from pybrain.structure.parametercontainer import ParameterContainer
-from pybrain.structure.modules.neuronlayer import NeuronLayer
+from HHMNeuronLayer import HHMNeuronLayer
 from pybrain.tools.functions import sigmoid
  
  
-class HHMSigmoidLayer(NeuronLayer, ParameterContainer):
+class HHMSigmoidLayer(HHMNeuronLayer):
     """Layer specifically for Helmholtz Machines implementing the sigmoid squashing function."""
     
-    def __init__():
-        ParameterContainer.__init__(self, self.dim)
         
     def _forwardImplementation(self, inbuf, outbuf):
         outbuf[:] = sigmoid(inbuf)
