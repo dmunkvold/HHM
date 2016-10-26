@@ -1,12 +1,12 @@
 import pybrain
-
+import numpy
+from pybrain.structure.modules.neuronlayer import NeuronLayer
 from HHMNeuronLayer import HHMNeuronLayer
 from pybrain.tools.functions import sigmoid
  
- 
+#currently testing. should be hhmneruonlayer 
 class HHMSigmoidLayer(HHMNeuronLayer):
     """Layer specifically for Helmholtz Machines implementing the sigmoid squashing function."""
-    
         
     def _forwardImplementation(self, inbuf, outbuf):
         outbuf[:] = sigmoid(inbuf)
@@ -15,11 +15,14 @@ class HHMSigmoidLayer(HHMNeuronLayer):
             neuronActivated = numpy.random.choice(numpy.arange(0, 2), p=[1 - outbuf[i], outbuf[i]])
             nodeValues[i] = neuronActivated
             outbuf[i] = neuronActivated*outbuf[i]
-        self._setParameters(nodeValues)
+        self.nodeValues(nodeValues)
         return outbuf
         
         
-    def _backwardImplementation(self, outerr, inerr, outbuf, inbuf):
-        inerr[:] = outbuf * (1 - outbuf) * outerr
+    def _getNodeValues(self):
+        return self.params
+    
+    def _computeProbabilities(self, inbuf):
+        return self
 
     
