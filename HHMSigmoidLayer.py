@@ -17,12 +17,9 @@ class HHMSigmoidLayer(HHMNeuronLayer):
             outbuf[i] = neuronActivated*outbuf[i]
         self.nodeValues(nodeValues)
         return outbuf
-        
-        
-    def _getNodeValues(self):
-        return self.params
     
     def _computeProbabilities(self, inbuf):
-        return self
+        outbuf[:] = sigmoid(inbuf)
+        return outbuf
 
     

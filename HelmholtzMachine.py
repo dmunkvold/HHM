@@ -3,6 +3,7 @@ import scipy
 from HHMSigmoidLayer import HHMSigmoidLayer
 from scipy import random, array, empty
 import numpy
+from HelmholtzNetwork import HelmholtzNetwork
 from pybrain.structure import FeedForwardNetwork
 from pybrain.structure import FullConnection
 from HHMBiasUnit import HHMBiasUnit
@@ -16,8 +17,8 @@ class HelmholtzMachine():
     def __init__(self, indim, Layers, LayerDims):
         
         
-        self.recNet = FeedForwardNetwork()
-        self.genNet = FeedForwardNetwork()
+        self.recNet = HelmholtzNetwork()
+        self.genNet = HelmholtzNetwork()
         self.indim = indim
         self.layerDims = LayerDims
         self.layers = numpy.empty(Layers, dtype=HHMSigmoidLayer)
