@@ -39,7 +39,8 @@ class HelmholtzNetworkComponent(object):
             for c in self.connections[m]:
                 computedProbs = c.outmod._computeProbabilities()
                 for p in range(0, len(c.params)-1):
-                    c.params[p] += .1(c.outmod.nodeValues[p%c.outmod.dim] - computedProbs[p%c.outmod.dim])(c.inmod.nodeValues[p/c.inmod.outdim])
+                    buffers = c.whichBuffers(p)
+                    c.params[p] += .1*(c.outmod.nodeValues[buffers[1]] - computedProbs[buffers[1]])*(c.inmod.nodeValues[buffers[0]])
 
 
     def _backwardImplementation(self, outerr, inerr, outbuf, inbuf):

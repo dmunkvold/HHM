@@ -37,7 +37,7 @@ class HelmholtzMachine():
             self.recNet.addConnection(FullConnection(self.layers[i-1], self.layers[i]))
             self.genNet.addConnection(FullConnection(self.layers[i], self.layers[i-1]))            
 
-        genBias = LinearLayer(1, name = "Generative Input Bias")
+        genBias = HHMBiasUnit(1, "Generative Input Bias")
         self.genNet.addInputModule(genBias)
         self.genNet.addConnection(FullConnection(genBias, self.layers[len(self.layers)-1]))
 

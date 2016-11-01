@@ -4,8 +4,9 @@ from scipy import random, array, empty
 from HelmholtzNetwork import HelmholtzNetwork
 from random import shuffle
 import math
+import numpy
 
-def HHMTrainer():
+class HHMTrainer():
     
     def __init__(self, HelmholtzMachine, dataset, distribution):
         self.dist = distribution
@@ -16,6 +17,7 @@ def HHMTrainer():
         self.setData(dataset)
         self.setDist()
         self.samplesGenerated = len(self.dist.keys())
+        self.samplesMade = []
         
     def setData(self, dataset):
         self.ds = dataset
@@ -29,30 +31,41 @@ def HHMTrainer():
         self.genNet._adjustWeights()
 
     def sleepPhase(self):
-        self.genNet.activate([1])
+        sample = self.genNet.activate([1])
+        for s in range(0, len(sample)):
+            sample[s] = numpy.random.choice(numpy.arange(0, 2), p=[1 - sample[s], sample[s]])
+        self.samplesMade.append(sample)
+        self.updateGenerativeDistribution(sample)
         self.recNet._adjustWeights()
             
         
     def train(self, iterations, desiredDivergence):
-        for i in iterations:
-            wakePhase(self.ds[i%len(self.ds)])
-            sleepPhase()
-            kldiv = calcKLDivergence()
-            if kldiv <= desiredDivergence:
-                return kldiv
+        for i in range(0, iterations-1):
+            self.wakePhase(self.ds[i%len(self.ds)])
+            self.sleepPhase()
+            kldiv = self.calcKLDivergence()
+            print kldiv
+            #if kldiv <= desiredDivergence:
+                #return kldiv
+        print self.samplesMade
         return kldiv
 
 
     def calcKLDivergence(self):
         divergence = 0
         for j in self.dist.keys():
-            divergence += self.dist[j]*(math.log(self.dist[j])/(self.genDist[j])/self.samplesGenerated)
+            divergence += self.dist[j]*(math.log(self.dist[j]/(self.genDist[j]/float(self.samplesGenerated))))
         return divergence
 
     def updateGenerativeDistribution(self, sample):
+        print sample
+        print self.genDist.keys()[0]
         self.samplesGenerated += 1
-        if sample in self.genDist.keys():
-            self.genDist[sample] += 1
+        for h in self.genDist.keys():
+            #issue is here
+            if sample == numpy.array(self.genDist[h]):
+                print "match"
+                self.genDist[sample] += 1
 
 
 

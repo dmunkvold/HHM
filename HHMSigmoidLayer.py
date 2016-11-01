@@ -13,7 +13,7 @@ class HHMSigmoidLayer(HHMNeuronLayer):
     def _forwardImplementation(self, inbuf, outbuf):
         outbuf[:] = sigmoid(inbuf)
         nodeValues = numpy.zeros(self.dim)
-        for i in range(0, len(outbuf)-1):
+        for i in range(0, len(outbuf)):
             neuronActivated = numpy.random.choice(numpy.arange(0, 2), p=[1 - outbuf[i], outbuf[i]])
             nodeValues[i] = neuronActivated
             outbuf[i] = neuronActivated*outbuf[i]
@@ -21,7 +21,7 @@ class HHMSigmoidLayer(HHMNeuronLayer):
         return outbuf
     
     def _computeProbabilities(self):
-        outbuf = numpy.zeros(len(self.inputbuffer))
+        outbuf = numpy.zeros(len(self.inputbuffer[0]))
         outbuf[:] = sigmoid(self.inputbuffer)
         return outbuf
 
