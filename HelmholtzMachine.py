@@ -22,12 +22,12 @@ class HelmholtzMachine():
         self.indim = indim
         self.layerDims = LayerDims
         self.layers = numpy.empty(Layers, dtype=HHMSigmoidLayer)
-        self.biasUnits = numpy.empty(Layers + 1, dtype = BiasUnit)
+        self.biasUnits = numpy.empty(Layers, dtype = BiasUnit)
         print(self.layers)
-        #declaring and adding input layer (currently testing, should be hhmsigmoid)
         self.layers[0] = HHMSigmoidLayer(3, name = "HHM Sigmoid Input/Output Layer")
         self.recNet.addInputModule(self.layers[0])
         self.genNet.addOutputModule(self.layers[0])
+
         
         #declaring and adding all other layers and connections (full for now)
         for i in range(1, len(self.layers)):
@@ -36,22 +36,22 @@ class HelmholtzMachine():
             self.genNet.addModule(self.layers[i])
             self.recNet.addConnection(FullConnection(self.layers[i-1], self.layers[i]))
             self.genNet.addConnection(FullConnection(self.layers[i], self.layers[i-1]))            
-        
+
+        genBias = LinearLayer(1, name = "Generative Input Bias")
+        self.genNet.addInputModule(genBias)
+        self.genNet.addConnection(FullConnection(genBias, self.layers[len(self.layers)-1]))
+
         #declaring and adding bias units and connections
         for j in range(0, len(self.biasUnits)):
             self.biasUnits[j] = HHMBiasUnit(1, "BiasUnit " + str(j))
-            if j==0:
+            if j == 0:
                 self.recNet.addModule(self.biasUnits[j])
                 self.recNet.addConnection(FullConnection(self.biasUnits[j], self.layers[j+1]))
-                continue
-            if j == (len(self.biasUnits)-2):
-                self.genNet.addModule(self.biasUnits[j])
-                self.genNet.addConnection(FullConnection(self.biasUnits[j], self.layers[j-1]))
                 continue
             if j == (len(self.biasUnits)-1):
                 self.genNet.addModule(self.biasUnits[j])
                 self.genNet.addConnection(FullConnection(self.biasUnits[j], self.layers[j-1]))
-                break            
+                continue
             else:
                 self.recNet.addModule(self.biasUnits[j])
                 self.genNet.addModule(self.biasUnits[j])

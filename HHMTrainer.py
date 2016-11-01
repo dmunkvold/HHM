@@ -1,30 +1,60 @@
 import pybrain
 
 from scipy import random, array, empty
-
+from HelmholtzNetwork import HelmholtzNetwork
 from random import shuffle
+import math
 
 def HHMTrainer():
     
-    def __init__(self, recModule, genModule, dataset, learningrate):    
-         
+    def __init__(self, HelmholtzMachine, dataset, distribution):
+        self.dist = distribution
+        self.genDist = {}
+        self.hhm = HelmholtzMachine
+        self.recNet = self.hhm.recNet
+        self.genNet = self.hhm.genNet
         self.setData(dataset)
-        self.rec = recModule
-        self.gen = genModule
-        self.lrate = learningrate
+        self.setDist()
+        self.samplesGenerated = len(self.dist.keys())
         
-        
-    def setData(dataset):
+    def setData(self, dataset):
         self.ds = dataset
-        
-    def wakePhase(iterations):
-        for i in iterations:
-            nodeValues = [[]] * len(self.rec.modules//2)
+
+    def setDist(self):
+        for k in self.dist.keys():
+            self.genDist[k] = 1
+
+    def wakePhase(self, datapoint):
+        self.recNet.activate(datapoint)
+        self.genNet._adjustWeights()
+
+    def sleepPhase(self):
+        self.genNet.activate([1])
+        self.recNet._adjustWeights()
             
         
-    def train(self):
-        
-        
+    def train(self, iterations, desiredDivergence):
+        for i in iterations:
+            wakePhase(self.ds[i%len(self.ds)])
+            sleepPhase()
+            kldiv = calcKLDivergence()
+            if kldiv <= desiredDivergence:
+                return kldiv
+        return kldiv
+
+
+    def calcKLDivergence(self):
+        divergence = 0
+        for j in self.dist.keys():
+            divergence += self.dist[j]*(math.log(self.dist[j])/(self.genDist[j])/self.samplesGenerated)
+        return divergence
+
+    def updateGenerativeDistribution(self, sample):
+        self.samplesGenerated += 1
+        if sample in self.genDist.keys():
+            self.genDist[sample] += 1
+
+
 
 
 """
