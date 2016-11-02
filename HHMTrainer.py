@@ -10,21 +10,27 @@ class HHMTrainer():
     
     def __init__(self, HelmholtzMachine, dataset, distribution):
         self.dist = distribution
-        self.genDist = {}
+        self.genDist = [[], []]
         self.hhm = HelmholtzMachine
         self.recNet = self.hhm.recNet
         self.genNet = self.hhm.genNet
         self.setData(dataset)
         self.setDist()
-        self.samplesGenerated = len(self.dist.keys())
-        self.samplesMade = []
+        self.samplesGenerated = len(self.dist[0])
+        #self.samplesMade = []
         
     def setData(self, dataset):
         self.ds = dataset
 
     def setDist(self):
-        for k in self.dist.keys():
-            self.genDist[k] = 1
+        print self.genDist[0]
+        print self.dist[0]
+        for k in range(0, len(self.dist[0])):
+            print self.genDist[0]
+            self.genDist[0].append(self.dist[0][k])
+            self.genDist[1].append(1)
+            print self.genDist
+
 
     def wakePhase(self, datapoint):
         self.recNet.activate(datapoint)
@@ -34,7 +40,9 @@ class HHMTrainer():
         sample = self.genNet.activate([1])
         for s in range(0, len(sample)):
             sample[s] = numpy.random.choice(numpy.arange(0, 2), p=[1 - sample[s], sample[s]])
-        self.samplesMade.append(sample)
+        #self.samplesMade.append(sample)
+        #print self.samplesMade
+        #print sample
         self.updateGenerativeDistribution(sample)
         self.recNet._adjustWeights()
             
@@ -44,28 +52,32 @@ class HHMTrainer():
             self.wakePhase(self.ds[i%len(self.ds)])
             self.sleepPhase()
             kldiv = self.calcKLDivergence()
-            print kldiv
+            if i%1000 == 0:
+                print kldiv
+            #print kldiv
             #if kldiv <= desiredDivergence:
                 #return kldiv
-        print self.samplesMade
+        #print self.samplesMade
         return kldiv
 
 
     def calcKLDivergence(self):
         divergence = 0
-        for j in self.dist.keys():
-            divergence += self.dist[j]*(math.log(self.dist[j]/(self.genDist[j]/float(self.samplesGenerated))))
+        #print self.genDist
+        #print self.dist
+        for j in range(0, len(self.dist[0])):
+            divergence += self.dist[1][j]*(math.log(self.dist[1][j]/(self.genDist[1][j]/float(self.samplesGenerated))))
         return divergence
 
     def updateGenerativeDistribution(self, sample):
-        print sample
-        print self.genDist.keys()[0]
+
         self.samplesGenerated += 1
-        for h in self.genDist.keys():
-            #issue is here
-            if sample == numpy.array(self.genDist[h]):
-                print "match"
-                self.genDist[sample] += 1
+        for h in range(0, len(self.genDist[0])):
+            #print sample, numpy.array(self.genDist[0][h])
+            if numpy.array_equal(sample, numpy.array(self.genDist[0][h])):
+                #print "match"
+                self.genDist[1][h] = 1 + self.genDist[1][h]
+                break
 
 
 

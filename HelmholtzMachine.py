@@ -4,6 +4,7 @@ from HHMSigmoidLayer import HHMSigmoidLayer
 from scipy import random, array, empty
 import numpy
 from HelmholtzNetwork import HelmholtzNetwork
+from HHMFullConnection import HHMFullConnection
 from pybrain.structure import FeedForwardNetwork
 from pybrain.structure import FullConnection
 from HHMBiasUnit import HHMBiasUnit
@@ -24,42 +25,48 @@ class HelmholtzMachine():
         self.layers = numpy.empty(Layers, dtype=HHMSigmoidLayer)
         self.biasUnits = numpy.empty(Layers, dtype = BiasUnit)
         print(self.layers)
-        self.layers[0] = HHMSigmoidLayer(3, name = "HHM Sigmoid Input/Output Layer")
+        self.layers[0] = HHMSigmoidLayer(indim, name = "HHM Sigmoid Input/Output Layer")
         self.recNet.addInputModule(self.layers[0])
         self.genNet.addOutputModule(self.layers[0])
 
         
         #declaring and adding all other layers and connections (full for now)
         for i in range(1, len(self.layers)):
-            self.layers[i] = HHMSigmoidLayer(self.layerDims[i], "HHM Sigmoid Layer " + str(i))
+            self.layers[i] = HHMSigmoidLayer(self.layerDims[i],  "HHM Sigmoid Layer " + str(i))
             self.recNet.addModule(self.layers[i])
             self.genNet.addModule(self.layers[i])
-            self.recNet.addConnection(FullConnection(self.layers[i-1], self.layers[i]))
-            self.genNet.addConnection(FullConnection(self.layers[i], self.layers[i-1]))            
+            self.recNet.addConnection(HHMFullConnection((.12/i), self.layers[i-1], self.layers[i]))
+            self.genNet.addConnection(HHMFullConnection((.12/i), self.layers[i], self.layers[i-1]))
 
         genBias = HHMBiasUnit(1, "Generative Input Bias")
         self.genNet.addInputModule(genBias)
-        self.genNet.addConnection(FullConnection(genBias, self.layers[len(self.layers)-1]))
+        self.genNet.addConnection(HHMFullConnection((.01), genBias, self.layers[len(self.layers)-1]))
 
         #declaring and adding bias units and connections
         for j in range(0, len(self.biasUnits)):
             self.biasUnits[j] = HHMBiasUnit(1, "BiasUnit " + str(j))
             if j == 0:
                 self.recNet.addModule(self.biasUnits[j])
-                self.recNet.addConnection(FullConnection(self.biasUnits[j], self.layers[j+1]))
+                self.recNet.addConnection(HHMFullConnection(.1, self.biasUnits[j], self.layers[j+1]))
                 continue
             if j == (len(self.biasUnits)-1):
                 self.genNet.addModule(self.biasUnits[j])
-                self.genNet.addConnection(FullConnection(self.biasUnits[j], self.layers[j-1]))
+                self.genNet.addConnection(HHMFullConnection(.1, self.biasUnits[j], self.layers[j-1]))
                 continue
             else:
                 self.recNet.addModule(self.biasUnits[j])
                 self.genNet.addModule(self.biasUnits[j])
-                self.recNet.addConnection(FullConnection(self.biasUnits[j], self.layers[j+1]))
-                self.genNet.addConnection(FullConnection(self.biasUnits[j], self.layers[j-1]))
+                self.recNet.addConnection(HHMFullConnection(.1, self.biasUnits[j], self.layers[j+1]))
+                self.genNet.addConnection(HHMFullConnection(.1, self.biasUnits[j], self.layers[j-1]))
         
         self.recNet.sortModules()
         self.genNet.sortModules()
+        for p in range(0, len(self.recNet.params)):
+            self.recNet.params[p] = 0.
+        for q in range(0, len(self.genNet.params)):
+            self.genNet.params[q] = 0.
+
+
     
     def printMachine(self):
         print("recognition network:")

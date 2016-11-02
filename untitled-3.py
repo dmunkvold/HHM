@@ -1,28 +1,50 @@
 import pybrain
 import numpy
+import scipy
 from HHMTrainer import HHMTrainer
 from HelmholtzMachine import HelmholtzMachine
 
-elements = numpy.array([1, 2, 3])
-probs = numpy.array([.7, .2, .1])
-distribution = {'[0, 1, 1]': .7, '[0, 0, 1]': .2, '[1, 1, 1]': .1}
+elements = numpy.array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12])
+probs = numpy.array([.1111, .1111,.1111,.1111,.1111,.1111, .0556, .0556, .0556, .0556, .0556, .0556])
+distribution = [[numpy.array([0, 0, 1, 0, 0, 1, 0, 0, 1]), numpy.array([0, 1, 0, 0, 1, 0, 0, 1, 0]), numpy.array([1, 0, 0, 1, 0, 0, 1, 0, 0]),
+                 numpy.array([0, 1, 1, 0, 1, 1, 0, 1, 1]), numpy.array([1, 1, 0, 1, 1, 0, 1, 1, 0]), numpy.array([1, 0, 1, 1, 0, 1, 1, 0, 1]),
+                 numpy.array([0, 0, 0, 1, 1, 1, 1, 1, 1]), numpy.array([1, 1, 1, 0, 0, 0, 1, 1, 1]), numpy.array([0, 0, 0, 1, 1, 1, 0, 0, 0]),
+                 numpy.array([1, 1, 1, 1, 1, 1, 0, 0, 0]), numpy.array([0, 0, 0, 0, 0, 0, 1, 1, 1]), numpy.array([1, 1, 1, 0, 0, 0, 0, 0, 0])], [.1111, .1111, .1111, .1111, .1111, .1111, .0556, .0556, .0556, .0556, .0556, .0556]]
 data = []
 
-for i in range(0, 999):
+for i in range(0, 99999):
     event = numpy.random.choice(elements, 1, list(probs))
     if event[0] == 1:
-        data.append([0, 1, 1])
+        data.append([0, 0, 1, 0, 0, 1, 0, 0, 1])
     if event[0] == 2:
-        data.append([0, 0, 1])
+        data.append([0, 1, 0, 0, 1, 0, 0, 1, 0])
     if event[0] == 3:
-        data.append([1, 1, 1])
+        data.append([1, 0, 0, 1, 0, 0, 1, 0, 0])
+    if event[0] == 4:
+        data.append([0, 1, 1, 0, 1, 1, 0, 1, 1])
+    if event[0] == 5:
+        data.append([1, 1, 0, 1, 1, 0, 1, 1, 0])
+    if event[0] == 6:
+        data.append([1, 0, 1, 1, 0, 1, 1, 0, 1])
+    if event[0] == 7:
+        data.append([0, 0, 0, 1, 1, 1, 1, 1, 1])
+    if event[0] == 8:
+        data.append([1, 1, 1, 0, 0, 0, 1, 1, 1])
+    if event[0] == 9:
+        data.append([0, 0, 0, 1, 1, 1, 0, 0, 0])
+    if event[0] == 10:
+        data.append([1, 1, 1, 1, 1, 1, 0, 0, 0])
+    if event[0] == 11:
+        data.append([0, 0, 0, 0, 0, 0, 1, 1, 1])
+    if event[0] == 12:
+        data.append([1, 1, 1, 0, 0, 0, 0, 0, 0])
 
 
 
-mac = HelmholtzMachine(3, 3, [3, 4, 2])
+mac = HelmholtzMachine(9, 2, [9, 6])
 trainer = HHMTrainer(mac, data, distribution)
 
-trainer.train(1000, .01)
+trainer.train(100000, .01)
 """
 mac.recNet.activate([0,0,1])
 for m in mac.recNet.modulesSorted:
