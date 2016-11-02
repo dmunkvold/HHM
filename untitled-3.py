@@ -12,7 +12,7 @@ distribution = [[numpy.array([0, 0, 1, 0, 0, 1, 0, 0, 1]), numpy.array([0, 1, 0,
                  numpy.array([1, 1, 1, 1, 1, 1, 0, 0, 0]), numpy.array([0, 0, 0, 0, 0, 0, 1, 1, 1]), numpy.array([1, 1, 1, 0, 0, 0, 0, 0, 0])], [.1111, .1111, .1111, .1111, .1111, .1111, .0556, .0556, .0556, .0556, .0556, .0556]]
 data = []
 
-for i in range(0, 99999):
+for i in range(0, 2):
     event = numpy.random.choice(elements, 1, list(probs))
     if event[0] == 1:
         data.append([0, 0, 1, 0, 0, 1, 0, 0, 1])
@@ -44,7 +44,7 @@ for i in range(0, 99999):
 mac = HelmholtzMachine(9, 2, [9, 6])
 trainer = HHMTrainer(mac, data, distribution)
 
-trainer.train(100000, .01)
+trainer.train(2, .01)
 """
 mac.recNet.activate([0,0,1])
 for m in mac.recNet.modulesSorted:

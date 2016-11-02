@@ -35,8 +35,8 @@ class HelmholtzMachine():
             self.layers[i] = HHMSigmoidLayer(self.layerDims[i],  "HHM Sigmoid Layer " + str(i))
             self.recNet.addModule(self.layers[i])
             self.genNet.addModule(self.layers[i])
-            self.recNet.addConnection(HHMFullConnection((.12/i), self.layers[i-1], self.layers[i]))
-            self.genNet.addConnection(HHMFullConnection((.12/i), self.layers[i], self.layers[i-1]))
+            self.recNet.addConnection(HHMFullConnection((.001/i), self.layers[i-1], self.layers[i]))
+            self.genNet.addConnection(HHMFullConnection((.001/i), self.layers[i], self.layers[i-1]))
 
         genBias = HHMBiasUnit(1, "Generative Input Bias")
         self.genNet.addInputModule(genBias)

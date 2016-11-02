@@ -23,16 +23,17 @@ class HHMTrainer():
         self.ds = dataset
 
     def setDist(self):
-        print self.genDist[0]
-        print self.dist[0]
+        #print self.genDist[0]
+        #print self.dist[0]
         for k in range(0, len(self.dist[0])):
             print self.genDist[0]
             self.genDist[0].append(self.dist[0][k])
             self.genDist[1].append(1)
-            print self.genDist
+            #print self.genDist
 
 
     def wakePhase(self, datapoint):
+        print datapoint
         self.recNet.activate(datapoint)
         self.genNet._adjustWeights()
 
@@ -63,7 +64,7 @@ class HHMTrainer():
 
     def calcKLDivergence(self):
         divergence = 0
-        #print self.genDist
+        print self.genDist
         #print self.dist
         for j in range(0, len(self.dist[0])):
             divergence += self.dist[1][j]*(math.log(self.dist[1][j]/(self.genDist[1][j]/float(self.samplesGenerated))))
