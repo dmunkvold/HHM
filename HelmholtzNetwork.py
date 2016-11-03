@@ -20,9 +20,9 @@ class HelmholtzNetworkComponent(object):
             index += m.indim
         
         for m in self.modulesSorted:
-            print m
+            #print m
             m.forward()
-            print m.nodeValues
+            #print m.nodeValues
             for c in self.connections[m]:
                 c.forward()
                 

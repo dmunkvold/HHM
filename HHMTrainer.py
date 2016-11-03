@@ -4,6 +4,7 @@ from scipy import random, array, empty
 from HelmholtzNetwork import HelmholtzNetwork
 from random import shuffle
 import math
+from pybrain.tools.functions import sigmoid
 import numpy
 
 class HHMTrainer():
@@ -33,17 +34,19 @@ class HHMTrainer():
 
 
     def wakePhase(self, datapoint):
-        print datapoint
+        print "datapoint",datapoint
         self.recNet.activate(datapoint)
         self.genNet._adjustWeights()
 
     def sleepPhase(self):
         sample = self.genNet.activate([1])
+        #print sample
         for s in range(0, len(sample)):
-            sample[s] = numpy.random.choice(numpy.arange(0, 2), p=[1 - sample[s], sample[s]])
+            sample[s] = numpy.random.choice(numpy.arange(0, 2), p=[1 - sigmoid(sample[s]), sigmoid(sample[s])])
+        #print sample
         #self.samplesMade.append(sample)
         #print self.samplesMade
-        #print sample
+        print sample
         self.updateGenerativeDistribution(sample)
         self.recNet._adjustWeights()
             
@@ -55,7 +58,7 @@ class HHMTrainer():
             kldiv = self.calcKLDivergence()
             if i%1000 == 0:
                 print kldiv
-            #print kldiv
+            print kldiv
             #if kldiv <= desiredDivergence:
                 #return kldiv
         #print self.samplesMade
