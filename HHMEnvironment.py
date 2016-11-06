@@ -10,6 +10,7 @@ class HHMEnvironment():
         self.probabilities = []
         self.dummyList = []
         self.parseEventProbs()
+        self.generated = [0] * len(self.eventProbs)
         
         
     def parseEventProbs(self):
@@ -19,16 +20,10 @@ class HHMEnvironment():
             self.dummyList.append(self.eventProbs.index(i))
             
     def sample(self, sampleSize):
-        print self.dummyList
         samples = []
         for j in range(0, sampleSize):
             sample = numpy.random.choice(self.dummyList, p=self.probabilities)
-            print sample
+            self.generated[sample] += 1
             samples.append(self.events[sample])
-        print samples
         return samples
             
-
-env1=HHMEnvironment(2, [([1,1], .9),([0,0], .1)])
-
-env1.sample(10)

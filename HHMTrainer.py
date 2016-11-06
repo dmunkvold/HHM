@@ -1,5 +1,5 @@
 import pybrain
-
+import random
 from scipy import random, array, empty
 from HelmholtzNetwork import HelmholtzNetwork
 from random import shuffle
@@ -49,18 +49,27 @@ class HHMTrainer():
         print sample
         self.updateGenerativeDistribution(sample)
         self.recNet._adjustWeights()
+
             
         
     def train(self, iterations, desiredDivergence):
+        #kldiv = [10,10]
         for i in range(0, iterations-1):
+            #print "wake/sleep", i
+            #print "wakepase"
             self.wakePhase(self.ds[i%len(self.ds)])
-            self.sleepPhase()
+            #print "sleepphase"
+            sample = self.sleepPhase()
+            #kldiv[1] = kldiv[0]
             kldiv = self.calcKLDivergence()
             if i%1000 == 0:
                 print kldiv
             print kldiv
-            #if kldiv <= desiredDivergence:
-                #return kldiv
+            #if kldiv[0]-kldiv[1]>.001:
+            #    self.optimizeLearningRates()
+            if kldiv <= desiredDivergence:
+                return kldiv
+            
         #print self.samplesMade
         return kldiv
 
@@ -84,8 +93,14 @@ class HHMTrainer():
                 break
 
 
-
-
+    def optimizeLearningRates(self):
+        for m in self.recNet.modulesSorted:
+            for c in self.recNet.connections[m]:
+                c.learningRate = 2*(c.learningRate)
+        for m in self.genNet.modulesSorted:
+            for c in self.genNet.connections[m]:
+                c.learningRate = 2*(c.learningRate)       
+                
 """
 this is an outline, don't have internet rn
 

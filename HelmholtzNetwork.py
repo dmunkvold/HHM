@@ -1,5 +1,7 @@
 from pybrain.structure.networks.network import Network
+from HHMBiasUnit import HHMBiasUnit
 import numpy
+import random
  
 class HelmholtzNetworkComponent(object):
     
@@ -12,6 +14,7 @@ class HelmholtzNetworkComponent(object):
         return super(HelmholtzNetworkComponent, self).activate(inpt)
         
     def _forwardImplementation(self, inbuf, outbuf):
+        #print "forward"
         assert self.sorted, ".sortModules() has not been called"
         index = 0
         offset = self.offset
@@ -20,11 +23,14 @@ class HelmholtzNetworkComponent(object):
             index += m.indim
         
         for m in self.modulesSorted:
+            
             #print m
             m.forward()
             #print m.nodeValues
             for c in self.connections[m]:
+                #print c
                 c.forward()
+                #print c.params
                 
         index = 0
         for m in self.outmodules:
@@ -32,17 +38,32 @@ class HelmholtzNetworkComponent(object):
             index += m.outdim
 
     def _adjustWeights(self):
-
+        #print "adjusting"
         #This function adjusts the parameters of generative training
-
+        #testing
         assert self.sorted, ".sortModules() has not been called"
         
         for m in self.modulesSorted:
+            
+            #print m
+            
+            if isinstance(m, HHMBiasUnit):
+                m.nodeValues = [1]
+            #print m.nodeValues
             for c in self.connections[m]:
                 computedProbs = c.outmod._computeProbabilities()
-                for p in range(0, len(c.params)-1):
+                for p in range(0, len(c.params)):
                     buffers = c.whichBuffers(p)
+                    #print c
+                    #print "buffers", buffers
+                    #print "outmod node values", c.outmod.nodeValues
+                    #print "computedprobs", computedProbs
+                    #print "inmod nodevalues", c.inmod.nodeValues
+                    #print "before",c.params
                     c.params[p] += (c.learningRate*(c.outmod.nodeValues[buffers[1]] - computedProbs[buffers[1]]))*(c.inmod.nodeValues[buffers[0]])
+                    
+                    #print "after:", c.params
+                   
 
 
 

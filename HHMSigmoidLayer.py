@@ -9,7 +9,7 @@ from pybrain.tools.functions import sigmoid
 
 class HHMSigmoidLayer(HHMNeuronLayer):
     """Layer specifically for Helmholtz Machines implementing the sigmoid squashing function."""
-        
+    #testing Tanh
     def _forwardImplementation(self, inbuf, outbuf):
         outbuf[:] = sigmoid(inbuf)
         nodeValues = numpy.zeros(self.dim)

@@ -36,38 +36,41 @@ class HelmholtzMachine():
             self.layers[i] = HHMSigmoidLayer(self.layerDims[i-1],  "HHM Sigmoid Layer " + str(i))
             self.recNet.addModule(self.layers[i])
             self.genNet.addModule(self.layers[i])
-            self.recNet.addConnection(HHMFullConnection((.01/i), self.layers[i-1], self.layers[i]))
-            self.genNet.addConnection(HHMFullConnection((.001), self.layers[i], self.layers[i-1]))
+            #.1 worked earlier
+            self.recNet.addConnection(HHMFullConnection((.01), self.layers[i-1], self.layers[i]))
+            #.001 worked earlier
+            self.genNet.addConnection(HHMFullConnection((.01), self.layers[i], self.layers[i-1]))
         
         
         genBias = HHMBiasUnit(1, "Generative Input Bias")
         self.genNet.addInputModule(genBias)
+        #.01 worked for biases
         self.genNet.addConnection(HHMFullConnection((.01), genBias, self.layers[len(self.layers)-1]))
-        """ testing
+        
         #declaring and adding bias units and connections
         for j in range(0, len(self.biasUnits)):
             self.biasUnits[j] = HHMBiasUnit(1, "BiasUnit " + str(j))
             if j == 0:
                 self.recNet.addModule(self.biasUnits[j])
-                self.recNet.addConnection(HHMFullConnection(.1, self.biasUnits[j], self.layers[j+1]))
+                self.recNet.addConnection(HHMFullConnection(.01, self.biasUnits[j], self.layers[j+1]))
                 continue
             if j == (len(self.biasUnits)-1):
                 self.genNet.addModule(self.biasUnits[j])
-                self.genNet.addConnection(HHMFullConnection(.1, self.biasUnits[j], self.layers[j-1]))
+                self.genNet.addConnection(HHMFullConnection(.01, self.biasUnits[j], self.layers[j-1]))
                 continue
             else:
                 self.recNet.addModule(self.biasUnits[j])
                 self.genNet.addModule(self.biasUnits[j])
-                self.recNet.addConnection(HHMFullConnection(.1, self.biasUnits[j], self.layers[j+1]))
-                self.genNet.addConnection(HHMFullConnection(.1, self.biasUnits[j], self.layers[j-1]))
-        """
+                self.recNet.addConnection(HHMFullConnection(.01, self.biasUnits[j], self.layers[j+1]))
+                self.genNet.addConnection(HHMFullConnection(.01, self.biasUnits[j], self.layers[j-1]))
+        
         self.recNet.sortModules()
         self.genNet.sortModules()
+
         for p in range(0, len(self.recNet.params)):
             self.recNet.params[p] = 0.
         for q in range(0, len(self.genNet.params)):
             self.genNet.params[q] = 0.
-
 
     
     def printMachine(self):

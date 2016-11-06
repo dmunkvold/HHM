@@ -52,10 +52,10 @@ for i in range(0, 9999):
         stuff[11] += 1
 
 print stuff
-mac = HelmholtzMachine(9, 2, [6, 1])
+mac = HelmholtzMachine(9, 1, [3])
 trainer = HHMTrainer(mac, data, distribution)
 
-trainer.train(2, .01)
+trainer.train(10000, .01)
 """
 mac.recNet.activate([0,0,1])
 for m in mac.recNet.modulesSorted:
