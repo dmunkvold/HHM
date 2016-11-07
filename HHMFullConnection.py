@@ -2,6 +2,7 @@ from scipy import reshape, dot, outer
 
 from pybrain.structure.connections.connection import Connection
 from pybrain.structure.parametercontainer import ParameterContainer
+import numpy
 
 
 class HHMFullConnection(Connection, ParameterContainer):
@@ -21,7 +22,12 @@ class HHMFullConnection(Connection, ParameterContainer):
         inerr += dot(reshape(self.params, (self.outdim, self.indim)).T, outerr)
         ds = self.derivs
         ds += outer(inbuf, outerr).T.flatten()
-
+        
+        
+    def _updateInputBuffer(self):
+        outbuf = dot(reshape(self.params, (self.outdim, self.indim)), self.inmod.nodeValues)
+        return numpy.array([outbuf])
+        
     def whichBuffers(self, paramIndex):
         """Return the index of the input module's output buffer and
         the output module's input buffer for the given weight."""

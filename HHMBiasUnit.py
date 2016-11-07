@@ -8,4 +8,5 @@ class HHMBiasUnit(HHMNeuronLayer):
         
     def _forwardImplementation(self, inbuf, outbuf):
         self.nodeValues = [1]
-        outbuf[:] = 1    
+        outbuf[:] = 1   
+        

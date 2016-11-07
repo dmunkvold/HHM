@@ -13,7 +13,8 @@ class HHMLinearLayer(HHMNeuronLayer):
     def _backwardImplementation(self, outerr, inerr, outbuf, inbuf):
         inerr[:] = outerr
         
-    def _computeProbabilities(self):
-            outbuf = numpy.zeros(len(self.inputbuffer[0]))
-            outbuf[:] = sigmoid(self.inputbuffer)
+    def _computeProbabilities(self, inputbuffer):
+            outbuf = numpy.zeros(len(inputbuffer[0]))
+            outbuf[:] = sigmoid(inputbuffer)
             return outbuf
+        

@@ -26,6 +26,7 @@ class HelmholtzNetworkComponent(object):
             
             #print m
             m.forward()
+            #print "forward inbuf",m.inputbuffer
             #print m.nodeValues
             for c in self.connections[m]:
                 #print c
@@ -42,6 +43,14 @@ class HelmholtzNetworkComponent(object):
         #This function adjusts the parameters of generative training
         #testing
         assert self.sorted, ".sortModules() has not been called"
+
+        index = 0
+        offset = self.offset
+        for m in self.inmodules:
+            if isinstance(m, HHMBiasUnit):
+                m.nodeValues = [1]            
+            m.inputbuffer[offset] = m.nodeValues
+            
         
         for m in self.modulesSorted:
             
@@ -49,16 +58,20 @@ class HelmholtzNetworkComponent(object):
             
             if isinstance(m, HHMBiasUnit):
                 m.nodeValues = [1]
-            #print m.nodeValues
+            #print m.inputbuffer
+            
             for c in self.connections[m]:
-                computedProbs = c.outmod._computeProbabilities()
+                #print "m outputbf", m.outputbuffer
+                inputbuff = c._updateInputBuffer()
+                #print "adjusting outmod inbuf", inputbuff
+                computedProbs = c.outmod._computeProbabilities(inputbuff)
                 for p in range(0, len(c.params)):
                     buffers = c.whichBuffers(p)
                     #print c
                     #print "buffers", buffers
                     #print "outmod node values", c.outmod.nodeValues
                     #print "computedprobs", computedProbs
-                    #print "inmod nodevalues", c.inmod.nodeValues
+                    #print "inmod nodevalues", c.inmod.nodeValues, c.inmod
                     #print "before",c.params
                     c.params[p] += (c.learningRate*(c.outmod.nodeValues[buffers[1]] - computedProbs[buffers[1]]))*(c.inmod.nodeValues[buffers[0]])
                     
