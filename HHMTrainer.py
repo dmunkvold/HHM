@@ -27,14 +27,15 @@ class HHMTrainer():
         #print self.genDist[0]
         #print self.dist[0]
         for k in range(0, len(self.dist[0])):
-            print self.genDist[0]
+            
             self.genDist[0].append(self.dist[0][k])
             self.genDist[1].append(1)
+            print self.genDist[0]
             #print self.genDist
 
 
     def wakePhase(self, datapoint):
-        print "datapoint",datapoint
+        #print "datapoint",datapoint
         self.recNet.activate(datapoint)
         self.genNet._adjustWeights()
 
@@ -43,10 +44,12 @@ class HHMTrainer():
         #print sample
         for s in range(0, len(sample)):
             sample[s] = numpy.random.choice(numpy.arange(0, 2), p=[1 - sigmoid(sample[s]), sigmoid(sample[s])])
+        for m in self.hhm.genNet.outmodules:
+            m.nodeValues = sample
         #print sample
         #self.samplesMade.append(sample)
         #print self.samplesMade
-        print sample
+        #print sample
         self.updateGenerativeDistribution(sample)
         self.recNet._adjustWeights()
 
@@ -63,8 +66,8 @@ class HHMTrainer():
             #kldiv[1] = kldiv[0]
             kldiv = self.calcKLDivergence()
             if i%1000 == 0:
-                print kldiv
-            print kldiv
+                print kldiv, i
+            #print kldiv
             #if kldiv[0]-kldiv[1]>.001:
             #    self.optimizeLearningRates()
             if kldiv <= desiredDivergence:
@@ -76,7 +79,7 @@ class HHMTrainer():
 
     def calcKLDivergence(self):
         divergence = 0
-        print self.genDist
+        #print self.genDist
         #print self.dist
         for j in range(0, len(self.dist[0])):
             divergence += self.dist[1][j]*(math.log(self.dist[1][j]/(self.genDist[1][j]/float(self.samplesGenerated))))

@@ -61,7 +61,6 @@ class HelmholtzNetworkComponent(object):
             #print m.inputbuffer
             
             for c in self.connections[m]:
-                #print "m outputbf", m.outputbuffer
                 inputbuff = c._updateInputBuffer()
                 #print "adjusting outmod inbuf", inputbuff
                 computedProbs = c.outmod._computeProbabilities(inputbuff)
@@ -73,6 +72,7 @@ class HelmholtzNetworkComponent(object):
                     #print "computedprobs", computedProbs
                     #print "inmod nodevalues", c.inmod.nodeValues, c.inmod
                     #print "before",c.params
+                    #print (c.learningRate*(c.outmod.nodeValues[buffers[1]] - computedProbs[buffers[1]]))*(c.inmod.nodeValues[buffers[0]])
                     c.params[p] += (c.learningRate*(c.outmod.nodeValues[buffers[1]] - computedProbs[buffers[1]]))*(c.inmod.nodeValues[buffers[0]])
                     
                     #print "after:", c.params
