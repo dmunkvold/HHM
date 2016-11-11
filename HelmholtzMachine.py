@@ -47,7 +47,7 @@ class HelmholtzMachine():
         self.genNet.addInputModule(genBias)
         #.01 worked for biases
         self.genNet.addConnection(HHMFullConnection((.01), genBias, self.layers[len(self.layers)-1]))
-
+        """
         #declaring and adding bias units and connections
         for j in range(0, len(self.biasUnits)):
             self.biasUnits[j] = HHMBiasUnit(1, "BiasUnit " + str(j))
@@ -64,7 +64,7 @@ class HelmholtzMachine():
                 self.genNet.addModule(self.biasUnits[j])
                 self.recNet.addConnection(HHMFullConnection(self.learningRates[j], self.biasUnits[j], self.layers[j+1]))
                 self.genNet.addConnection(HHMFullConnection(self.learningRates[j-1], self.biasUnits[j], self.layers[j-1]))
-
+        """
         self.recNet.sortModules()
         self.genNet.sortModules()
         

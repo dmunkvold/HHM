@@ -10,11 +10,12 @@ env = HHMEnvironment(9, [([0, 0, 1, 0, 0, 1, 0, 0, 1], .1111), ([0, 1, 0, 0, 1, 
 #HelmholtzMachine(9, 2, [21, 7], [.975, .01]) got o\to 0.064424758814
 # HelmholtzMachine(9, 2, [21, 7], [.975, .1]) got to 0.0355046686714!
 # HelmholtzMachine(9, 2, [21, 7], [.98, .1]) got to 0.032075310275!
-
+# 100, 7 did the same as the above eve with lower rates: .15, .01
 #.15 got to .11
+#hhm = HelmholtzMachine(9, 2, [6, 7], [.9, .01]) worked best realy ao far
 data = env.sample(60000)
 print env.generated
-hhm = HelmholtzMachine(9, 2, [21, 7], [.98, .1])
+hhm = HelmholtzMachine(9, 2, [6, 13], [.9, .01])
 #print hhm.recNet, hhm.genNet
 
     

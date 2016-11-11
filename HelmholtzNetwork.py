@@ -14,7 +14,7 @@ class HelmholtzNetworkComponent(object):
         return super(HelmholtzNetworkComponent, self).activate(inpt)
         
     def _forwardImplementation(self, inbuf, outbuf):
-        #print "forward"
+        #print "forward////////////////////////////////////////////////"
         assert self.sorted, ".sortModules() has not been called"
         index = 0
         offset = self.offset
@@ -25,13 +25,19 @@ class HelmholtzNetworkComponent(object):
         for m in self.modulesSorted:
             
             #print m
+            #print "module inbuf", m.inputbuffer[0]
             m.forward()
-            #print "forward inbuf",m.inputbuffer
+            #print "forward outbuf",m.outputbuffer[0]
             #print m.nodeValues
             for c in self.connections[m]:
                 #print c
+                #print c.learningRate
                 c.forward()
-                #print c.params
+                #print c
+                #print "inmod outbuf", c.inmod.outputbuffer[0]
+                #print "params", c.params
+                #print "outmod inbuf", c.outmod.inputbuffer[0]
+
                 
         index = 0
         for m in self.outmodules:
@@ -39,7 +45,7 @@ class HelmholtzNetworkComponent(object):
             index += m.outdim
 
     def _adjustWeights(self):
-        #print "adjusting"
+        #print "adjusting/////////////////////////////////////////////////////////////////////"
         #This function adjusts the parameters of generative training
         #testing
         assert self.sorted, ".sortModules() has not been called"
@@ -64,14 +70,19 @@ class HelmholtzNetworkComponent(object):
                 inputbuff = c._updateInputBuffer()
                 #print "adjusting outmod inbuf", inputbuff
                 computedProbs = c.outmod._computeProbabilities(inputbuff)
+                #print c
+                #print "params",c.params
+                #print "inmod nodevalues", c.inmod.nodeValues, c.inmod
+                #print "adjusting outmod inbuf", inputbuff
                 for p in range(0, len(c.params)):
                     buffers = c.whichBuffers(p)
-                    #print c
+                    
                     #print "buffers", buffers
                     #print "outmod node values", c.outmod.nodeValues
                     #print "computedprobs", computedProbs
-                    #print "inmod nodevalues", c.inmod.nodeValues, c.inmod
-                    #print "before",c.params
+                    
+                    
+                    
                     #print (c.learningRate*(c.outmod.nodeValues[buffers[1]] - computedProbs[buffers[1]]))*(c.inmod.nodeValues[buffers[0]])
                     c.params[p] += (c.learningRate*(c.outmod.nodeValues[buffers[1]] - computedProbs[buffers[1]]))*(c.inmod.nodeValues[buffers[0]])
                     

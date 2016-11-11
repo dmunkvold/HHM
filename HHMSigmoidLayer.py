@@ -16,7 +16,8 @@ class HHMSigmoidLayer(HHMNeuronLayer):
         for i in range(0, len(outbuf)):
             neuronActivated = numpy.random.choice(numpy.arange(0, 2), p=[1 - outbuf[i], outbuf[i]])
             nodeValues[i] = neuronActivated
-            outbuf[i] = neuronActivated*outbuf[i]
+            #was like this: outbuf[i] = neuronActivated*outbuf[i] now im testing!!
+            outbuf[i] = neuronActivated
         self.nodeValues = nodeValues
         #print self, self.inputbuffer
         return outbuf

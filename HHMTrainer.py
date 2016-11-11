@@ -2,6 +2,7 @@ import pybrain
 import random
 from scipy import random, array, empty
 from HelmholtzNetwork import HelmholtzNetwork
+from HHMBiasUnit import HHMBiasUnit
 from random import shuffle
 import math
 from pybrain.tools.functions import sigmoid
@@ -66,14 +67,17 @@ class HHMTrainer():
             #kldiv[1] = kldiv[0]
             kldiv = self.calcKLDivergence()
             if i%1000 == 0:
+                print self.genDist
                 print kldiv, i
             #print kldiv
             #if kldiv[0]-kldiv[1]>.001:
-            #    self.optimizeLearningRates()
+            #self.optimizeLearningRates()
             if kldiv <= desiredDivergence:
                 return kldiv
             
         #print self.samplesMade
+        #print self.genDist
+        self.generateSamples(100000)
         return kldiv
 
 
@@ -99,10 +103,42 @@ class HHMTrainer():
     def optimizeLearningRates(self):
         for m in self.recNet.modulesSorted:
             for c in self.recNet.connections[m]:
-                c.learningRate = 2*(c.learningRate)
+                c.learningRate = .99*(c.learningRate)
         for m in self.genNet.modulesSorted:
             for c in self.genNet.connections[m]:
-                c.learningRate = 2*(c.learningRate)       
+                c.learningRate = .99*(c.learningRate)
+                
+    def generateSamples(self, numberOfSamples):
+        """
+        for m in self.recNet.modulesSorted:
+            if isinstance(m, HHMBiasUnit):
+                m.nodeValues = [0]
+        for m in self.genNet.modulesSorted:
+            if isinstance(m, HHMBiasUnit):
+                m.nodeValues = [0]
+        """
+        samples = []
+        for s in range(0, numberOfSamples):
+            sample = self.genNet.activate([1])
+            #print sample
+            for s in range(0, len(sample)):
+                sample[s] = numpy.random.choice(numpy.arange(0, 2), p=[1 - sigmoid(sample[s]), sigmoid(sample[s])])
+            samples.append(sample)
+        self.analyzeSamples(samples)
+    
+    def analyzeSamples(self, samples):
+        sampleCount = {}
+        for n in samples:
+            if str(n) in sampleCount.keys():
+                sampleCount[str(n)] += 1
+            else:
+                sampleCount[str(n)] = 1
+        print sorted(sampleCount.values())
+
+        print sampleCount
+            
+    
+
                 
 """
 this is an outline, don't have internet rn
