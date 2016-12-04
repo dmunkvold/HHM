@@ -31,7 +31,7 @@ class HHMTrainer():
             
             self.genDist[0].append(self.dist[0][k])
             self.genDist[1].append(1)
-            print self.genDist[0]
+            #print self.genDist[0]
             #print self.genDist
 
 
@@ -53,6 +53,7 @@ class HHMTrainer():
         #print sample
         self.updateGenerativeDistribution(sample)
         self.recNet._adjustWeights()
+        return sample
 
             
         
@@ -67,17 +68,18 @@ class HHMTrainer():
             #kldiv[1] = kldiv[0]
             kldiv = self.calcKLDivergence()
             if i%1000 == 0:
-                print self.genDist
+                #print self.genDist
                 print kldiv, i
-            #print kldiv
+            print i
             #if kldiv[0]-kldiv[1]>.001:
             #self.optimizeLearningRates()
-            if kldiv <= desiredDivergence:
-                return kldiv
+            #TESTING
+            #if kldiv <= desiredDivergence:
+            #    return kldiv
             
         #print self.samplesMade
         #print self.genDist
-        self.generateSamples(100000)
+        self.generateSamples(10)
         return kldiv
 
 
@@ -124,16 +126,18 @@ class HHMTrainer():
             for s in range(0, len(sample)):
                 sample[s] = numpy.random.choice(numpy.arange(0, 2), p=[1 - sigmoid(sample[s]), sigmoid(sample[s])])
             samples.append(sample)
+        self.samples = samples
         self.analyzeSamples(samples)
     
     def analyzeSamples(self, samples):
+        
         sampleCount = {}
         for n in samples:
             if str(n) in sampleCount.keys():
                 sampleCount[str(n)] += 1
             else:
                 sampleCount[str(n)] = 1
-        print sorted(sampleCount.values())
+        #print sorted(sampleCount.values())
 
         print sampleCount
             

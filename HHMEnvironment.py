@@ -15,9 +15,11 @@ class HHMEnvironment():
         
     def parseEventProbs(self):
         for i in self.eventProbs:
+            print self.eventProbs
             self.events.append(i[0])
             self.probabilities.append(i[1])
             self.dummyList.append(self.eventProbs.index(i))
+            
             
     def sample(self, sampleSize):
         samples = []
