@@ -58,29 +58,17 @@ class HHMTrainer():
             
         
     def train(self, iterations, desiredDivergence):
-        #kldiv = [10,10]
         for i in range(0, iterations-1):
-            #print "wake/sleep", i
-            #print "wakepase"
             self.wakePhase(self.ds[i%len(self.ds)])
-            #print "sleepphase"
-            sample = self.sleepPhase()
-            #kldiv[1] = kldiv[0]
+            self.sleepPhase()
             kldiv = self.calcKLDivergence()
-            if i%1000 == 0:
+            #if i%1000 == 0:
                 #print self.genDist
-                print kldiv, i
-            print i
-            #if kldiv[0]-kldiv[1]>.001:
-            #self.optimizeLearningRates()
-            #TESTING
-            #if kldiv <= desiredDivergence:
-            #    return kldiv
-            
-        #print self.samplesMade
-        #print self.genDist
-        self.generateSamples(10)
-        return kldiv
+                #print kldiv, i
+        print kldiv
+        sampleCount = self.generateSamples(100000)
+        return sampleCount
+        #return kldiv
 
 
     def calcKLDivergence(self):
@@ -127,7 +115,8 @@ class HHMTrainer():
                 sample[s] = numpy.random.choice(numpy.arange(0, 2), p=[1 - sigmoid(sample[s]), sigmoid(sample[s])])
             samples.append(sample)
         self.samples = samples
-        self.analyzeSamples(samples)
+        sampleCount = self.analyzeSamples(samples)
+        return sampleCount
     
     def analyzeSamples(self, samples):
         
@@ -138,8 +127,8 @@ class HHMTrainer():
             else:
                 sampleCount[str(n)] = 1
         #print sorted(sampleCount.values())
-
-        print sampleCount
+        return sampleCount
+        #print sampleCount
             
     
 
