@@ -16,10 +16,11 @@ def runExperiment(envs, iterations):
     agent = []
     for i in range(0, iterations):
         env = random.choice(envs)
+        found = False
         for u in agent:
-            data = countOccurances(env.sample(100))
-            generated = u[1].generateSamples(100)
-            if compareSamples(data, generated) == True:
+            data = countOccurances(env.sample(1000))
+            generated = u[1].generateSamples(1000)
+            if compareSamples(data, generated):
                 results = u[1].generateSamples(100000)
                 analyzeResults(env, results)
                 found = True
@@ -27,6 +28,7 @@ def runExperiment(envs, iterations):
         if found:
             continue
         else:
+            print "first time learning this!"
             data = env.sample(80000)
             hhm = HelmholtzMachine(9, 2, [6, 11], [.98, .025])
             trainer = HHMTrainer(hhm, data, [env.events, env.probabilities])
@@ -67,9 +69,16 @@ def countOccurances(samples):
     return dataprobs
 
 def compareSamples(d1, d2):
-    d1maxes = sorted(d1.values())[6::]
-    d2maxes = sorted(d2.values())[6::]
-    if set(d1maxes) == set(d2maxes):
+    d1maxes = sorted(d1.values())[-6:]
+    for i in range(0, len(d1maxes)):
+        d1maxes[i] = d1.keys()[d1.values().index(d1maxes[i])]
+    d2maxes = sorted(d2.values())[-3:]
+
+    for j in range(0, len(d2maxes)):
+        d2maxes[j] = d2.keys()[d2.values().index(d2maxes[j])]
+    print d2maxes
+    if set(d2maxes).issubset(set(d1maxes)):
+        print "match"
         return True
     else:
         return False
@@ -111,4 +120,4 @@ def calcKLDivergence(data, generated):
 
     return divergence
 """
-runExperiment(environments, 10)
+runExperiment(environments, 100)

@@ -67,6 +67,8 @@ class HHMTrainer():
                 #print kldiv, i
         print kldiv
         sampleCount = self.generateSamples(100000)
+        print sampleCount
+        print sorted(sampleCount.values())
         return sampleCount
         #return kldiv
 
